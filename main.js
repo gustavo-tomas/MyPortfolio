@@ -3,6 +3,9 @@ import "./style.css"
 // Three.js
 import * as THREE from "three";
 
+// Loader of GLTF format
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+
 // Mouse control
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
@@ -27,23 +30,26 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 camera.position.setZ(30);
 
 // 3D Object
-const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
-const material = new THREE.MeshStandardMaterial({ color: 0x44FF63 });
-const torus = new THREE.Mesh(geometry, material);
+// const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
+// const material = new THREE.MeshStandardMaterial({ color: 0x44FF63 });
+// const torus = new THREE.Mesh(geometry, material);
 
-scene.add(torus);
+// scene.add(torus);
 
 // Light setup
 const pointLight = new THREE.PointLight(0xFFFFFF);
-pointLight.position.set(20, 20, 20);
+pointLight.position.set(1.0, 10, 4.5);
+scene.add(pointLight);
 
-const ambientLight = new THREE.AmbientLight(0xFFFFFF);
-scene.add(pointLight, ambientLight);
+// const ambientLight = new THREE.AmbientLight(0xFFFFFF);
+// scene.add(ambientLight);
 
 // Helpers
 const lightHelper = new THREE.PointLightHelper(pointLight);
+scene.add(lightHelper);
+
 const gridHelper = new THREE.GridHelper(200, 50);
-scene.add(lightHelper, gridHelper);
+scene.add(gridHelper);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -53,9 +59,9 @@ const controls = new OrbitControls(camera, renderer.domElement);
 function animate() {
   requestAnimationFrame(animate);
 
-  torus.rotation.x += 0.01;
-  torus.rotation.y += 0.005;
-  torus.rotation.z += 0.01;
+  // torus.rotation.x += 0.01;
+  // torus.rotation.y += 0.005;
+  // torus.rotation.z += 0.01;
 
   controls.update();
 
@@ -85,7 +91,7 @@ scene.background = spaceTexture;
 
 // FrogSphere setup
 const frogTexture = new THREE.TextureLoader().load("./assets/frog.jpeg");
-const normalFrogTexture = new THREE.TextureLoader().load("normal.jpg"); // doesnt exist
+const normalFrogTexture = new THREE.TextureLoader().load("./assets/coin_texture.png"); // doesnt exist
 
 const frog = new THREE.Mesh(
   new THREE.SphereGeometry(3, 32, 32),
@@ -115,5 +121,18 @@ function moveCamera() {
 }
 
 // document.body.onscroll = moveCamera;
+
+// Load objects in gltf format
+var loader = new GLTFLoader();
+
+loader.load(
+  "./assets/coin_detailed.glb",
+  function (gltf) {
+    const coin = gltf.scene;
+    coin.scale.set(2, 2, 2);
+    coin.position.y = 4;
+    scene.add(coin);
+  },
+);
 
 animate();
