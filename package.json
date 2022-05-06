@@ -1,5 +1,5 @@
 {
-  "name": "-myportfolio",
+  "name": "myportfolio",
   "private": true,
   "version": "0.0.0",
   "scripts": {
@@ -7,10 +7,12 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "devDependencies": {
-    "vite": "^2.9.7"
-  },
   "dependencies": {
-    "three": "^0.140.0"
+    "three": "^0.140.0",
+    "vue": "^3.2.25"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^2.3.1",
+    "vite": "^2.9.7"
   }
 }
