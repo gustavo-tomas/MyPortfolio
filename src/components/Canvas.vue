@@ -9,36 +9,32 @@
     <Camera
       ref="camera"
       :far=20000
-      :position="{ x: -70, y: 90, z: 30 }"
+      :position="{ x: -7, y: 19, z: -9 }"
     />
     <Scene
       ref="scene"
+      background="#DEFEFF"
     >
       <DirectionalLight 
         ref="dirLight"
         color="#ffffff"
         cast-shadow
       />
-      <AmbientLight 
-        :intensity="10.00"
-      />
       <GltfModel
         ref="room"
         src="../../assets/models/room.gltf"
-        @load="onReady"
+        @load="onLoad"
       />
-      <GltfModel
+      <!-- <GltfModel
         ref="coin"
         src="../../assets/models/coin_embedded.gltf"
-        :position="{ x: coinXpos, y: coinYpos, z:coinZpos }"
-        @load="onReady"
-      />
+        @load="onLoad"
+      /> -->
       <GltfModel
         ref="landscape"
-        :scale="{ x: 0.5, y: 0.5, z: 0.5 }"
-        src="../../assets/landscape_smaller.glb"
-        :position="{ y: -4 }"
-        @load="onReady"
+        :scale="{ x: 1.0, y: 1.0, z: 1.0 }"
+        src="../../assets/landscape.glb"
+        @load="onLoad"
       />
     </Scene>
   </Renderer>
@@ -48,85 +44,56 @@
 <script>
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-
-let coinXpos = 0;
-let coinYpos = 0;
-let coinZpos = 0;
+import { Object3D } from "troisjs";
 
 export default {
   name: "Canvas",
-  data() {
-    return {
-      coinXpos: coinXpos,
-      coinYpos: coinYpos,
-      coinZpos: coinZpos,
-    };
-  },
   mounted() {
 
     // Scene setup
-    // const scene = this.$refs.scene.scene;
-    
+    const scene = this.$refs.scene.scene;
+
     // Loader
-    // const loader = new GLTFLoader();
+    const loader = new GLTFLoader();
+
+    // Loading object
+    loader.load('../../assets/models/coin_embedded.gltf', (gltf) => {
+      const root = gltf.scene;
+
+      root.traverse((obj) => {
+        if (obj.isMesh) {
+          obj.castShadow = true;
+          obj.receiveShadow = true;
+        }
+      });
+      scene.add(root);
+    });
+
+    // Background setup
+    // const backgroundTexture = new THREE.TextureLoader().load("../../assets/frog.jpeg");
+    // scene.background = backgroundTexture;
 
     // Directional light
     const dirLight = this.$refs.dirLight.light;
     dirLight.position.set(-1, 1.75, 1);
-    dirLight.intensity = 3.0;
+    dirLight.intensity = 1.5;
 
     // Renderer setup
     // const renderer = this.$refs.renderer;
-    // renderer.outputEncoding = THREE.sRGBEncoding;
-    
-    // Update position before each frame
-    // renderer.addListener("beforerender", this.move);
-    
-    // Load test
-    // loader.load(
-    //   "../../assets/landscape_smaller.glb",
-    //   function (gltf) {
-    //     const obj = gltf.scene;
-    //     obj.scale.set(5, 5, 5);
-    //     obj.position.y = -10;
-    //     scene.add(obj);
-    //   },
-    // );
-    // renderer.render();
-  },
-  created() {
-    window.addEventListener("keydown", (e) => {
-      switch(e.key) {
-        case 'a':
-          console.log("a");
-          coinXpos -= 1;
-          break;
-        case 'w':
-          console.log("w");
-          coinYpos += 1;
-          break;
-        case 's':
-          console.log("s");
-          coinYpos -= 1;
-          break;
-        case 'd':
-          console.log("d");
-          coinXpos += 1;
-          break;
-        default:
-          break;
-      }
-    });
   },
   methods: {
-    move() {
-      const coin = this.$refs.coin;
-      console.log(coin.position)
-      coin.position.x = coinXpos;
-      coin.position.y = coinYpos;      
-    },
-    onReady(model) {
-      console.log("Ready", model);
+    onLoad(model) {
+      console.log("Model loaded", model);
+      if (typeof model != Object3D) {
+        console.log("Model is not of type 'Object3D'");
+        return;
+      }
+      model.traverse(function (child) {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
     },
   },
 };
