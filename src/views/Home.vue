@@ -1,5 +1,4 @@
 <template>
-<h1>Welcome!</h1>
 <Canvas />
 </template>
 
@@ -9,7 +8,7 @@ import Canvas from "../components/Canvas.vue";
 export default {
   name: "Home",
   components: {
-      Canvas,
+    Canvas,
   },
 };
 </script>

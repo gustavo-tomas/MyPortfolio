@@ -1,70 +1,132 @@
 <template>
-<div ref="canvas"></div>
+<div id="container">
+  <Renderer
+    ref="renderer"
+    resize="window"
+    orbitCtrl
+    shadow
+  >
+    <Camera
+      ref="camera"
+      :far=20000
+      :position="{ x: -70, y: 90, z: 30 }"
+    />
+    <Scene
+      ref="scene"
+    >
+      <DirectionalLight 
+        ref="dirLight"
+        color="#ffffff"
+        cast-shadow
+      />
+      <AmbientLight 
+        :intensity="10.00"
+      />
+      <GltfModel
+        ref="room"
+        src="../../assets/models/room.gltf"
+        @load="onReady"
+      />
+      <GltfModel
+        ref="coin"
+        src="../../assets/models/coin_embedded.gltf"
+        :position="{ x: coinXpos, y: coinYpos, z:coinZpos }"
+        @load="onReady"
+      />
+      <GltfModel
+        ref="landscape"
+        :scale="{ x: 0.5, y: 0.5, z: 0.5 }"
+        src="../../assets/landscape_smaller.glb"
+        :position="{ y: -4 }"
+        @load="onReady"
+      />
+    </Scene>
+  </Renderer>
+</div>
 </template>
 
 <script>
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
-// Active scene
-const scene = new THREE.Scene();
-
-// Main camera
-const fov = 75; 
-const aspectRatio = window.innerWidth / window.innerHeight;
-const near = 0.1;
-const far = 1000;
-const camera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
-
-// Lights
-const pointLight = new THREE.PointLight(0xFFFFFF);
-const ambientLight = new THREE.AmbientLight(0xFFFFFF);
-
-// Objects
-const loader = new GLTFLoader();
-
-// Renderer
-const renderer = new THREE.WebGL1Renderer({});
+let coinXpos = 0;
+let coinYpos = 0;
+let coinZpos = 0;
 
 export default {
   name: "Canvas",
   data() {
     return {
-      scene: scene,
-      camera: camera,
-      pointLight: pointLight,
-      ambientLight: ambientLight,
-      loader: loader,
-      renderer: renderer,
+      coinXpos: coinXpos,
+      coinYpos: coinYpos,
+      coinZpos: coinZpos,
     };
   },
-  created() {
-    this.scene.add(this.camera);
-    this.scene.add(this.pointLight);
-    // this.loadAsset(this.scene, "../../public/assets/models/coin.glb");
-    this.pointLight.position.set(0, 0, 10);
-    this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-  },
   mounted() {
-    this.$refs.canvas.appendChild(this.renderer.domElement);
-    this.animate();
+
+    // Scene setup
+    // const scene = this.$refs.scene.scene;
+    
+    // Loader
+    // const loader = new GLTFLoader();
+
+    // Directional light
+    const dirLight = this.$refs.dirLight.light;
+    dirLight.position.set(-1, 1.75, 1);
+    dirLight.intensity = 3.0;
+
+    // Renderer setup
+    // const renderer = this.$refs.renderer;
+    // renderer.outputEncoding = THREE.sRGBEncoding;
+    
+    // Update position before each frame
+    // renderer.addListener("beforerender", this.move);
+    
+    // Load test
+    // loader.load(
+    //   "../../assets/landscape_smaller.glb",
+    //   function (gltf) {
+    //     const obj = gltf.scene;
+    //     obj.scale.set(5, 5, 5);
+    //     obj.position.y = -10;
+    //     scene.add(obj);
+    //   },
+    // );
+    // renderer.render();
+  },
+  created() {
+    window.addEventListener("keydown", (e) => {
+      switch(e.key) {
+        case 'a':
+          console.log("a");
+          coinXpos -= 1;
+          break;
+        case 'w':
+          console.log("w");
+          coinYpos += 1;
+          break;
+        case 's':
+          console.log("s");
+          coinYpos -= 1;
+          break;
+        case 'd':
+          console.log("d");
+          coinXpos += 1;
+          break;
+        default:
+          break;
+      }
+    });
   },
   methods: {
-    animate() {
-      requestAnimationFrame(this.animate);
-      this.renderer.render(this.scene, this.camera);
+    move() {
+      const coin = this.$refs.coin;
+      console.log(coin.position)
+      coin.position.x = coinXpos;
+      coin.position.y = coinYpos;      
     },
-    loadAsset(scene, glbObject) {
-      this.loader.load(
-        glbObject,
-        function (gltf) {
-          const object = gltf.scene;
-          object.scale.set(2, 2, 2);
-          object.position.y = 4;
-          scene.add(object);
-        },
-      );
+    onReady(model) {
+      console.log("Ready", model);
     },
   },
 };
