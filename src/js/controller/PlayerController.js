@@ -1,13 +1,11 @@
 export default class PlayerController {
 
-  constructor(scene, physics) {
+  constructor(physics) {
     this.physics = physics;
-    this.scene = scene;
   }
 
   // Updates character position based on key pressed
   onKeyPress(e) {
-    // const player = this.scene.getObjectByName("Coin");
     
     // TODO: Change name 'Coin' to 'Player'
     let player;

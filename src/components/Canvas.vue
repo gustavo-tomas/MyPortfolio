@@ -80,7 +80,7 @@ export default {
 
     // Initializes controllers
     initControllers() {
-      this.playerController = new PlayerController(this.scene.scene, this.physics);
+      this.playerController = new PlayerController(this.physics);
     },
 
     // Initializes event listeners
