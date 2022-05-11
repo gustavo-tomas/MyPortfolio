@@ -15,7 +15,8 @@ import Light from "../js/Light";
 import Helper from "../js/Helper";
 import Loader from "../js/Loader";
 import Physics from "../js/Physics";
-import PlayerController from "../js/controller/PlayerController";
+import CharacterController from "../js/controller/CharacterController";
+// import ThirdPersonCamera from "../js/controller/ThirdPersonCamera";
 
 export default {
   name: "Canvas",
@@ -25,8 +26,8 @@ export default {
     init() {
       this.initPhysics();
       this.initGraphics();
+      this.initUtils();
       this.initControllers();
-      this.initEventListeners();
     },
 
     // Initializes renderer, scene, lights, objects, ...
@@ -34,43 +35,59 @@ export default {
 
       // Scene
       this.scene = new Scene();
-      this.scene.createScene("#DEFEFF");
+      this.scene.createScene("#A3E3FA");
 
       // Camera
       this.camera = new Camera();
-      this.camera.camera.position.set(1, 10, 10);
 
       // Renderer
       this.renderer = new Renderer();
       this.renderer.createRenderer();
       document.body.appendChild(this.renderer.renderer.domElement);
 
-      // Directional light
-      this.dirLight = new Light();
-      this.scene.scene.add(this.dirLight.light);
-
-      // Helpers
-      this.helper = new Helper(this.dirLight.light);
-      this.scene.scene.add(this.helper.lightHelper, this.helper.gridHelper);
-
-      // Orbit controls
-      this.controls = new OrbitControls(this.camera.camera, this.renderer.renderer.domElement);
+      // Lights
+      this.light = new Light();
+      this.light.createDirectional(0xffffbb, 4, true, [100,100,100]);
+      this.light.createHemi(0xffeeb1, 0x080820, 4);
+      // this.light.createSpot(0xffa95c, 4);
+      this.scene.scene.add(...this.light.lights);
       
+      // Model(Not player model) & Text loader
+      this.loader = new Loader(this.physics, this.player);
+      this.loader.createObjects(this.scene.scene);
+
+      // Player is loaded in the controller, everything else here
+      // this.loader.loadGLTF(this.scene.scene, '../../assets/models/coin.gltf', true, true, [0, 10, 0], 10000, true, "sphere");
+      // this.loader.loadGLTF(this.scene.scene, '../../assets/models/ball.glb', true, true, [0, 10, 0], 10000, true, "sphere");
+
+      // this.loader.loadGLTF(this.scene.scene, '../../assets/models/fountain.glb', true, false);
+      // this.loader.loadGLTF(this.scene.scene, '../../assets/models/room_sep.glb', true, true);
+      // this.loader.loadGLTF(this.scene.scene, '../../assets/fonts/lol.glb', true, true);
+      
+      // this.loader.loadGLTF(this.scene.scene, '../../assets/landscape.glb', true, true);
+      this.loader.loadGLTF(this.scene.scene, '../../assets/plane.glb', true, true);
+    },
+
+    // Initializes common utilities (clock, stats, ...)
+    initUtils() {
+
       // Clock
       this.clock = new THREE.Clock();
       
-      // Stats panel
+      // Stats
       this.stats = new Stats();
       this.stats.showPanel(0);
       document.body.appendChild(this.stats.dom);
-      
-      // Model & Text loader
-      this.loader = new Loader(this.physics);
-      this.loader.createObjects(this.scene.scene);
-      this.loader.loadGLTF(this.scene.scene, '../../assets/models/coin.gltf', true, false, [0, 10, 0], 10000, true, "sphere");
-      // this.loader.loadGLTF(this.scene.scene, '../../assets/models/room_sep.glb', false, true);
-      // this.loader.loadGLTF(this.scene.scene, '../../assets/landscape.glb', false, true);
-      // this.loader.loadGLTF(this.scene.scene, '../../assets/fonts/lol.glb', true, true);
+
+      // Helpers
+      this.helper = new Helper();
+      this.helper.createDirHelper(this.light.dirLight);
+      this.helper.createHemiHelper(this.light.hemiLight);
+      // this.helper.createSpotHelper(this.light.spotLight);
+      this.helper.createGridHelper();
+      this.helper.createAxesHelper();
+      this.helper.createCameraHelper(this.camera.camera);
+      this.scene.scene.add(...this.helper.helpers);
     },
 
     // Initializes physics
@@ -78,25 +95,17 @@ export default {
       this.physics = new Physics();
     },
 
-    // Initializes controllers
+    // Initializes player, camera and orbit controllers
     initControllers() {
-      this.playerController = new PlayerController(this.physics);
-    },
-
-    // Initializes event listeners
-    initEventListeners() {
-      window.addEventListener('resize', (e) => {
-        this.camera.updateProjection();
-        this.renderer.renderer.setSize(window.innerWidth, window.innerHeight);
+      this.characterController = new CharacterController({
+        scene: this.scene.scene,
+        physics: this.physics  
       });
-      
-      window.addEventListener('keypress', (e) => {
-        this.playerController.onKeyPress(e);
-      });
-      
-      window.addEventListener('keyup', (e) => {
-        this.playerController.onKeyUp(e);
-      });
+      this.controls = new OrbitControls(this.camera.camera, this.renderer.renderer.domElement);
+      // this.thirdPersonCamera = new ThirdPersonCamera({
+      //   camera: this.camera.camera,
+      //   physics: this.physics,
+      // });
     },
 
     // Updates objects in each frame
@@ -108,6 +117,15 @@ export default {
       
       // Updates physics
       this.physics.updatePhysics(delta);
+
+      // Updates character properties 
+      this.characterController.update(delta);
+
+      // Update lights
+      this.light.updateLights(this.camera.camera);
+
+      // Updates camera
+      // this.thirdPersonCamera.updateThirdPersonCamera(delta);
 
       // Updates rendered scene & camera
       this.renderer.render(this.scene.scene, this.camera.camera);

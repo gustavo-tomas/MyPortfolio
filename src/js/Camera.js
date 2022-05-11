@@ -9,6 +9,12 @@ export default class Camera {
       near,
       far
     );
+    this.camera.position.set(0, 5, 15);
+    this.init();
+  }
+
+  init() {
+    window.addEventListener("resize", (e) => this.updateProjection(), false);
   }
 
   updateProjection() {

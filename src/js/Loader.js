@@ -17,6 +17,7 @@ export default class Loader {
         if (obj.isMesh) {
           obj.castShadow = cast;
           obj.receiveShadow = rec;
+          if (obj.material.map) obj.material.map.anisotropy = 16;
           if (pos) obj.position.set(...pos);
           this.physics.createRigidBody(obj, mass, dynamic, type);
         }
@@ -27,18 +28,6 @@ export default class Loader {
 
   // Create test objects with physics
   createObjects(scene) {
-    // Ground
-    this.groundGeo = new THREE.BoxGeometry(30, 30, 1);
-    this.groundMat = new THREE.MeshBasicMaterial({
-      color: 0xafafaf,
-    });
-    this.groundMesh = new THREE.Mesh(this.groundGeo, this.groundMat);
-    this.groundMesh.castShadow = true;
-    this.groundMesh.receiveShadow = true;
-    scene.add(this.groundMesh);
-
-    // Add ground body
-    this.physics.createRigidBody(this.groundMesh);
 
     // Box
     this.boxGeo = new THREE.BoxGeometry(2, 2, 2);

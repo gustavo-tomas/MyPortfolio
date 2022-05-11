@@ -23,17 +23,16 @@ export default class Physics {
     let boxSize = new THREE.Vector3();
     cubeBoundingBox.getSize(boxSize);
     
-    const size = [boxSize.x, boxSize.y, boxSize.z];
+    const size = [boxSize.x || 0.01, boxSize.y || 0.01, boxSize.z || 0.01];
     
-    if (type === "box")
-      size.forEach((s, i) => {size[i] /= 2});
+    size.forEach((s, i) => {size[i] /= 2});
 
     const pos = [mesh.position.x, mesh.position.y, mesh.position.z];
     
     // Create mesh rigidbody as a cube
     const body = new CANNON.Body({
       mass: mass, // mass 0 for static bodies
-      shape: type === "box" ? new CANNON.Box(new CANNON.Vec3(...size)) : new CANNON.Sphere(2),
+      shape: type === "box" ? new CANNON.Box(new CANNON.Vec3(...size)) : new CANNON.Sphere(size[0]),
       position: new CANNON.Vec3(...pos),
       type: dynamic ? CANNON.Body.DYNAMIC : CANNON.Body.STATIC,
     });
@@ -46,10 +45,6 @@ export default class Physics {
     
     this.world.addBody(body);
     this.rigidBodies.push({ body: body, mesh: mesh });
-    
-    // Testing plane
-    if (this.rigidBodies.length === 1)
-      body.quaternion.setFromEuler(-Math.PI / 2, 0, 0); // rotation for horizontal plane
   }
 
   // Updates physics of each object
@@ -61,5 +56,10 @@ export default class Physics {
       rigidbody.mesh.position.copy(rigidbody.body.position);
       rigidbody.mesh.quaternion.copy(rigidbody.body.quaternion);
     }
+  }
+
+  // Get rigidbody by name
+  getRigidBodyByName(name) {
+    return this.rigidBodies.filter((rigid) => rigid.mesh.name == name);
   }
 }
