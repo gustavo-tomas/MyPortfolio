@@ -1,3 +1,5 @@
+// https://www.youtube.com/watch?v=UuNPHOJ_V5o
+
 import * as THREE from "three";
 
 export default class ThirdPersonCamera {
@@ -5,11 +7,6 @@ export default class ThirdPersonCamera {
   constructor(params) {
     this.params = params;
     this.camera = params.camera;
-    this.physics = params.physics;
-    this.target = params.target;
-
-    if (this.target === undefined)
-      this.getTarget();
 
     this.currentPosition = new THREE.Vector3();
     this.currentLookat = new THREE.Vector3();
@@ -17,41 +14,35 @@ export default class ThirdPersonCamera {
 
   // TODO: collapse the 2 ideals into 1
   // Calculates ideal camera offset
-  calculateIdealOffset() {
-    const idealOffset = new THREE.Vector3(-15, 20, -30);
-    idealOffset.applyQuaternion(this.params.target.rotation);
-    idealOffset.add(this.params.target.position);
+  calculateIdealOffset(target) {
+    const idealOffset = new THREE.Vector3(-4, 5, -10);
+    idealOffset.applyQuaternion(target.quaternion); // .rotation
+    idealOffset.add(target.position);
     return idealOffset;
   }
 
   // Calculates ideal camera lookat
-  calculateIdealLookat() {
-    const idealLookat = new THREE.Vector3(0, 10, 50);
-    idealLookat.applyQuaternion(this.params.target.rotation);
-    idealLookat.add(this.params.target.position);
+  calculateIdealLookat(target) {
+    const idealLookat = new THREE.Vector3(0, -15, 50);
+    idealLookat.applyQuaternion(target.quaternion); //.rotation
+    idealLookat.add(target.position);
     return idealLookat;
   }
 
   // Updates camera with player input
-  updateThirdPersonCamera(delta) {
-    const idealOffset = this.calculateIdealOffset();
-    const idealLookat = this.calculateIdealLookat();
+  updateThirdPersonCamera(params) {
+    if (params.target === undefined) return;
+    else params.target = params.target.mesh;
 
-    this.currentPosition.copy(idealOffset);
-    this.currentLookat.copy(idealLookat);
+    const idealOffset = this.calculateIdealOffset(params.target);
+    const idealLookat = this.calculateIdealLookat(params.target);
+
+    const t = 1.0 - Math.pow(0.001, params.delta);
+
+    this.currentPosition.lerp(idealOffset, t);
+    this.currentLookat.lerp(idealLookat, t);
 
     this.camera.position.copy(this.currentPosition);
     this.camera.lookAt(this.currentLookat);
-  }
-
-  // 
-  getTarget() {
-    for (let i = 0; i < this.physics.rigidBodies.length; i++) {
-      const rigidbody = this.physics.rigidBodies[i];
-      if (rigidbody.mesh.name == "Player") {
-        this.target = rigidbody;
-        break;
-      }
-    }
   }
 }

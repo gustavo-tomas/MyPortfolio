@@ -15,8 +15,9 @@ import Light from "../js/Light";
 import Helper from "../js/Helper";
 import Loader from "../js/Loader";
 import Physics from "../js/Physics";
+
 import CharacterController from "../js/controller/CharacterController";
-// import ThirdPersonCamera from "../js/controller/ThirdPersonCamera";
+import ThirdPersonCamera from "../js/controller/ThirdPersonCamera";
 
 export default {
   name: "Canvas",
@@ -37,8 +38,11 @@ export default {
       this.scene = new Scene();
       this.scene.createScene("#A3E3FA");
 
-      // Camera
+      // Cameras
       this.camera = new Camera();
+      this.thirdPersonCamera = new ThirdPersonCamera({
+        camera: this.camera.camera,
+      });
 
       // Renderer
       this.renderer = new Renderer();
@@ -79,6 +83,9 @@ export default {
       this.stats.showPanel(0);
       document.body.appendChild(this.stats.dom);
 
+      // Orbit controls (camera can override controls)
+      this.controls = new OrbitControls(this.camera.camera, this.renderer.renderer.domElement);
+
       // Helpers
       this.helper = new Helper();
       this.helper.createDirHelper(this.light.dirLight);
@@ -95,17 +102,12 @@ export default {
       this.physics = new Physics();
     },
 
-    // Initializes player, camera and orbit controllers
+    // Initializes player & camera controllers
     initControllers() {
       this.characterController = new CharacterController({
         scene: this.scene.scene,
         physics: this.physics  
       });
-      this.controls = new OrbitControls(this.camera.camera, this.renderer.renderer.domElement);
-      // this.thirdPersonCamera = new ThirdPersonCamera({
-      //   camera: this.camera.camera,
-      //   physics: this.physics,
-      // });
     },
 
     // Updates objects in each frame
@@ -125,7 +127,10 @@ export default {
       this.light.updateLights(this.camera.camera);
 
       // Updates camera
-      // this.thirdPersonCamera.updateThirdPersonCamera(delta);
+      this.thirdPersonCamera.updateThirdPersonCamera({
+        delta: delta,
+        target: this.physics.getRigidBodyByName("Player")[0],
+      });
 
       // Updates rendered scene & camera
       this.renderer.render(this.scene.scene, this.camera.camera);
