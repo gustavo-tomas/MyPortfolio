@@ -49,7 +49,7 @@ export default class CharacterController {
           obj.receiveShadow = true;
           if (obj.material.map) obj.material.map.anisotropy = 16;
           obj.position.set(0, 10, 0);
-          this.params.physics.createRigidBody(obj, 10, true, "sphere");
+          this.params.physics.createRigidBody(obj, 10000, true, "box"); // dont let it roll over!
         }
       });
       this.params.scene.add(model);
