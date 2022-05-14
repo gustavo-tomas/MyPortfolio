@@ -85,7 +85,7 @@ export default {
       this.helper.createPointHelper(this.light.pointLight);
       this.helper.createGridHelper();
       this.helper.createAxesHelper();
-      // this.scene.scene.add(...this.helper.helpers);
+      this.scene.scene.add(...this.helper.helpers);
     },
 
     // 
@@ -125,10 +125,11 @@ export default {
       // Updates rendered scene & camera
       this.composer.render();
 
-      // Not efficient :>
-      const obj = this.scene.scene.getObjectByName("Campfire");
-      if (obj)
-        obj.rotation.y += 0.003;
+      // Rotates the campfire if already loaded
+      if (!this.obj)
+        this.obj = this.scene.scene.getObjectByName("Campfire");
+      if (this.obj)
+        this.obj.rotation.y += 0.003;
     },
   },
   mounted() {

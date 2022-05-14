@@ -1,7 +1,6 @@
 <template>
   <div id="campfire">
-    <!-- <Campfire /> -->
-    <CannonGame />
+    <Campfire />
   </div>
   <div id="home">
     <div id="welcome-section">
@@ -14,13 +13,11 @@
 
 <script>
 import Campfire from "../components/Campfire.vue";
-import CannonGame from "../components/CannonGame.vue";
 
 export default {
   name: "Home",
   components: {
     Campfire,
-    CannonGame
   }
 };
 </script>
@@ -53,8 +50,5 @@ export default {
 #description {
   font-size: 2.0vw;
   padding: 1vw;
-}
-
-#campfire {
 }
 </style>
