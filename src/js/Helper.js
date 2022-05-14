@@ -29,6 +29,13 @@ export default class Helper {
     this.helpers.push(this.spotHelper);
   }
 
+  // Creates point light helpers
+  createPointHelper(light) {
+    if (light === undefined) return;
+    this.pointHelper = new THREE.PointLightHelper(light);
+    this.helpers.push(this.pointHelper);
+  }
+
   // Creates a grid helper
   createGridHelper(size=2000, divisions=500) {
     this.gridHelper = new THREE.GridHelper(size, divisions);

@@ -37,9 +37,19 @@ export default class Light {
     this.lights.push(this.spotLight);
   }
 
+  // Create a point light
+  createPoint(color=0xffffff, intensity=1.0, castShadow=true) {
+    this.pointLight = new THREE.PointLight(color, intensity);
+    this.pointLight.castShadow = castShadow;
+    this.pointLight.shadow.bias = -0.0001;
+    this.pointLight.shadow.mapSize.width = 4096;
+    this.pointLight.shadow.mapSize.height = 4096;
+    this.lights.push(this.pointLight);
+  }
+
   // Update position of light
   updateLights(camera) {
-    if (this.spotLight === undefined) return;
+    if (!this.camera || this.spotLight === undefined) return;
     this.spotLight.position.set(
       camera.position.x + 10,
       camera.position.y + 10,

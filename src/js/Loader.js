@@ -1,15 +1,32 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 
 export default class Loader {
 
   constructor(physics) {
-    this.loader = new GLTFLoader();
     this.physics = physics;
   }
 
+  loadOBJ(scene, path) {
+    // instantiate a loader
+    const loader = new OBJLoader();
+
+    // load a resource
+    loader.load(
+      // resource URL
+      path,
+      // called when resource is loaded
+      function ( object ) {
+        scene.add( object );
+      },
+    )
+  }
+
   loadGLTF(scene, path, cast=false, rec=false, pos=null, mass=0, dynamic=false, type="box") {
-    this.loader.load(path, (gltf) => {
+    
+    const loader = new GLTFLoader();
+    loader.load(path, (gltf) => {
       const model = gltf.scene;
       
       // Casting/receiving shadows & physics
@@ -19,9 +36,12 @@ export default class Loader {
           obj.receiveShadow = rec;
           if (obj.material.map) obj.material.map.anisotropy = 16;
           if (pos) obj.position.set(...pos);
-          this.physics.createRigidBody(obj, mass, dynamic, type);
+
+          if (this.physics)
+            this.physics.createRigidBody(obj, mass, dynamic, type);
         }
       });
+      console.log("Model added", model);
       scene.add(model);
     });
   }
