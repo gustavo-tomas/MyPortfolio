@@ -29,26 +29,24 @@ export default {
   flex-direction: column;
   align-items: center;
   position: fixed;
-  height: 100vh;
-  width: 100vw;
+  left: 50%;
+  bottom: 30%;
 }
 
 #welcome-section {
   position: fixed;
-  bottom: 0;
-  width: 100vw;
 }
 
 #title {
-  font-size: 8.0vw;
+  font-size: 8.0vh;
 }
 
 #subtitle {
-  font-size: 3.0vw;
+  font-size: 3.0vh;
 }
 
 #description {
-  font-size: 2.0vw;
-  padding: 1vw;
+  font-size: 2.0vh;
+  padding: 1vh;
 }
 </style>

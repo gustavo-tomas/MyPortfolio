@@ -85,7 +85,7 @@ export default {
       this.helper.createPointHelper(this.light.pointLight);
       this.helper.createGridHelper();
       this.helper.createAxesHelper();
-      this.scene.scene.add(...this.helper.helpers);
+      // this.scene.scene.add(...this.helper.helpers);
     },
 
     // 
