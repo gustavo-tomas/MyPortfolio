@@ -8,7 +8,10 @@ export default class Renderer {
   }
 
   createRenderer() {
-    this.renderer = new THREE.WebGLRenderer();
+    this.renderer = new THREE.WebGLRenderer({
+      powerPreference: "high-performance",
+      antialias: true,
+    });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.shadowMap.enabled = true;
