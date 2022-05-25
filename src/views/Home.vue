@@ -9,15 +9,22 @@
       <p id="description">My name is Gustavo. Here are some of my projects!</p>
     </div>
   </div>
+  <!-- <Project 
+    projectName="DiscordBot"
+    projectDescription="A music bot for discord"
+    projectPicture="github_logo.png"
+  /> -->
 </template>
 
 <script>
+import Project from "../components/Project.vue";
 import Campfire from "../components/Campfire.vue";
 
 export default {
   name: "Home",
   components: {
     Campfire,
+    Project,
   }
 };
 </script>

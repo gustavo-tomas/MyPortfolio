@@ -29,7 +29,7 @@ export default {
 
       // Scene
       this.scene = new Scene();
-      this.scene.createScene("#000000");
+      this.scene.createScene();
 
       // Cameras
       this.camera = new Camera();
@@ -53,16 +53,46 @@ export default {
 
       // Lights
       this.light = new Light();
-      this.light.createPoint(0xF9D97B, 1.5);
+      this.light.createPoint(0xF9D97B, 1.0);
+      this.light.pointLight.distance = 1000;
+      this.light.pointLight.decay = 2;
+      this.light.pointLight.power = 40;
       this.light.pointLight.position.set(0, 0.5, 0);
+      
+      this.light.createHemi(0x000066, 0xf3f3f3, 0.7);
       this.scene.scene.add(...this.light.lights);
 
       // Model & Text loader
       this.loader = new Loader();
-      this.loader.loadGLTF(this.scene.scene, '../../assets/campfire.glb', true, true);
-      this.loader.loadGLTF(this.scene.scene, '../../assets/test.glb', true, true);
+      // this.loader.loadGLTF(this.scene.scene, '../../assets/campfire.glb', true, true);
+      // this.loader.loadGLTF(this.scene.scene, '../../assets/full.glb', true, true);
+      
+      function callMe() {
+
+      }
+      
+      this.loader.loadGLTF(this.scene.scene, '../../assets/room.glb', true, true, callMe, "../../assets/floorBake.png");
+      this.loader.loadGLTF(this.scene.scene, '../../assets/full.glb', true, true);
+      this.loader.loadGLTF(this.scene.scene, '../../assets/wall.glb', true, true, callMe, "../../assets/wallBake.png");
+      this.loader.loadGLTF(this.scene.scene, '../../assets/board.glb', true, true, callMe, "../../assets/BoardBake.png");
+      // this.loader.loadGLTF(this.scene.scene, '../../assets/git.glb', true, true, this.addToCampfire);
+      // this.loader.loadGLTF(this.scene.scene, '../../assets/test.glb', true, true, this.addToCampfire);
+      // this.loader.loadGLTF(this.scene.scene, '../../assets/lamps.glb', true, true);
 
       this.renderer.renderer.domElement.addEventListener("dblclick", this.onDblClick, false);
+      // this.renderer.renderer.domElement.addEventListener("mousemove", this.onMove, false);
+    },
+
+    addToCampfire(params) {
+      if (!this.campfire) this.campfire = new Map();
+      const mixer = new THREE.AnimationMixer(params.gltf.scene);
+      
+      // play anims here
+      this.campfire.set(params.name, {
+        model: params.model,
+        gltf: params.gltf,
+        mixer: mixer,
+      });
     },
 
     // Initializes common utilities (clock, stats, ...)
@@ -108,10 +138,10 @@ export default {
         if (intersects.length > 0) {
           var selectedObject = intersects[0]; // First intersected object
 
-          console.log(selectedObject.object.name)
+          console.log("CLICK", selectedObject)
           switch(selectedObject.object.name) {
-            case "Test":
-              selectedObject.userData = { URL: "https://youtube.com" };
+            case "GithubCoin":
+              selectedObject.userData = { URL: "https://github.com" };
               break;
             case "Campfire_1":
               selectedObject.userData = { URL: "https://github.com" };
@@ -121,6 +151,26 @@ export default {
           }
 
           window.open(selectedObject.userData.URL, "_blank");
+        }
+      }
+    },
+
+    // 
+    onMove(e) {
+      this.mouse.x = ( e.clientX / window.innerWidth ) * 2 - 1;
+      this.mouse.y = - ( e.clientY / window.innerHeight ) * 2 + 1;
+      this.raycaster.setFromCamera(this.mouse, this.camera.camera);
+
+      const objects = [
+        this.scene.scene.getObjectByName("GithubCoin"),
+      ];
+      
+      if (objects) {
+        var intersects = this.raycaster.intersectObjects(objects, true);
+        if (intersects.length > 0) {
+          var selectedObject = intersects[0]; // First intersected object
+          console.log("HOVER", selectedObject)
+          selectedObject.object.rotation.z += 0.005;
         }
       }
     },
@@ -138,16 +188,22 @@ export default {
       // Update controls
       this.controls.update();
 
+      // Updates animations
+      if (this.campfire) {
+        this.campfire.forEach((item) => {
+          const mixer = item.mixer;
+          mixer.update(delta);
+        })
+      }
+
       // Updates rendered scene & camera
       // this.renderer.renderer.render(this.scene.scene, this.camera.camera);
       this.composer.render();
 
-      setTimeout(() => {
-        console.log("Scene polycount:", this.renderer.renderer.info.render.triangles)
-        console.log("Active Drawcalls:", this.renderer.renderer.info.render.calls)
-        console.log("Textures in Memory", this.renderer.renderer.info.memory.textures)
-        console.log("Geometries in Memory", this.renderer.renderer.info.memory.geometries)
-      }, 10000);
+      // console.log("Scene polycount:", this.renderer.renderer.info.render.triangles)
+      // console.log("Active Drawcalls:", this.renderer.renderer.info.render.calls)
+      // console.log("Textures in Memory", this.renderer.renderer.info.memory.textures)
+      // console.log("Geometries in Memory", this.renderer.renderer.info.memory.geometries)
 
       // Rotates the campfire if already loaded
       if (!this.obj)
