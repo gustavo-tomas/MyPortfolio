@@ -36,6 +36,7 @@ export function setEvents(params) {
       event: e 
     });
     if (intersects.length > 0) {
+      document.body.style.cursor = "pointer";
       var selectedObject = intersects[0].object; // First intersected object
       if (params.objects.includes(selectedObject) && !hoverCount) {
         params.assets[selectedObject.name].hover = true;
@@ -45,6 +46,7 @@ export function setEvents(params) {
       }
     }
     else if (objectName) {
+      document.body.style.cursor = "default";
       UTILS.setVisibility({ divID: objectName, visibility: "hidden" });
       params.assets[objectName].hover = false;
       hoverCount = 0;
