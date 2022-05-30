@@ -6,7 +6,6 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 // Paths
 const modelsPath = "./public/assets/models/";
-const texturesPath = "./public/assets/textures/";
 
 /**
  * @brief Fetches Html file as a string
@@ -68,37 +67,18 @@ function loadModels(params) {
       model.scale.set(2, 2, 2);
       
       const name = params.model.split(".")[0];
-      const textureLoader = new THREE.TextureLoader();
-      
-      textureLoader.load(
-        texturesPath + params.texture,
-        function(texture) {
-          const mat = new THREE.MeshBasicMaterial({
-            map: texture
-          });
-          // Mapping textures & shadows
-          model.traverse((obj) => {
-            if (obj.isMesh) {
-              obj.castShadow = true;
-              obj.receiveShadow = true;
-              
-              obj.userData.url = params.assets[name].url;
-              
-              if (obj.material) {
-                obj.material = mat;
-                obj.material.map.anisotropy = 16;
-              }
-              else {
-                console.warn("No material")
-              }
-              
-              params.assets[name].mesh.push(obj);
-              params.objects.push(obj);
-            }
-          });
+      // Mapping textures & shadows
+      model.traverse((obj) => {
+        if (obj.isMesh) {
+          obj.castShadow = true;
+          obj.receiveShadow = true;
+          
+          obj.userData.url = params.assets[name].url;
+          
+          params.assets[name].mesh.push(obj);
+          params.objects.push(obj);
         }
-      );
-
+      });
       params.scene.add(model);
     }
   );
