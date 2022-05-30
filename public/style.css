@@ -50,6 +50,7 @@ canvas {
 
 .home {
   grid-column: 8 / 12;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
 
 .section {
@@ -68,6 +69,7 @@ canvas {
   padding: 10px 15px;
   margin-bottom: 5px;
   width: fit-content;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
 
 .section-description {
@@ -75,4 +77,5 @@ canvas {
   background-color: black;
   padding: 10px 15px;
   width: fit-content;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
