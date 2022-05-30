@@ -8,14 +8,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "requirejs": "^2.3.6",
     "stats.js": "^0.17.0",
-    "three": "^0.140.0",
-    "vue": "^3.2.25",
-    "vue-router": "^4.0.15"
+    "three": "^0.140.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^2.3.1",
     "vite": "^2.9.7"
   }
 }
