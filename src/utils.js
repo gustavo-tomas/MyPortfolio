@@ -8,24 +8,15 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 const modelsPath = "./public/assets/models/";
 
 /**
- * @brief Fetches Html file as a string
- * @param {String} url - Address for the HTML to fetch
- * @returns {String} The resulting HTML string fragment
- */
-async function fetchHtmlAsText(url) {
-  return await (await fetch(url)).text();
-}
-
-/**
  * @brief Loads html file into a given Section 
  * @param {Object} params - Object with the parameters of the div
  * @param {String} sectionID - The ID of the section to load the HTML file
  * @param {File} sectionFile - The HTML file to be inserted into the section
  */
-export async function loadSections(params) {
+function loadSections(params) {
   const contentDiv = document.getElementById(params.sectionID);
   if (contentDiv)
-    contentDiv.innerHTML += await fetchHtmlAsText(params.sectionFile);
+    contentDiv.innerHTML += params.assets[params.sectionID].description;
 }
 
 /**
@@ -46,8 +37,8 @@ export function setVisibility(params) {
  */
 export function load(params) {
   loadSections({
+    assets: params.assets,
     sectionID: params.name,
-    sectionFile: params.name + ".html",
   });
   loadModels(params);
 }
@@ -72,6 +63,9 @@ function loadModels(params) {
         if (obj.isMesh) {
           obj.castShadow = true;
           obj.receiveShadow = true;
+
+          if (obj.material.map)
+            obj.material.map.anisotropy = 16;
           
           obj.userData.url = params.assets[name].url;
           
