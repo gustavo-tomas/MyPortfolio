@@ -12,6 +12,7 @@ export const assets = {
         A music bot for discord. Can queue, skip, stop and resume songs. Built using Javascript.
       </div>`,
     hover: false,
+    selectable: true,
   },
   todorust: {
     name: "todorust",
@@ -27,6 +28,7 @@ export const assets = {
       </div>
     `,
     hover: false,
+    selectable: true,
   },
   balancasolucoes: {
     name: "balancasolucoes",
@@ -42,6 +44,7 @@ export const assets = {
       </div>
     `,
     hover: false,
+    selectable: true,
   },
   github: {
     name: "github",
@@ -57,5 +60,35 @@ export const assets = {
       </div>
     `,
     hover: false,
+    selectable: true,
+  },
+  train_track: {
+    name: "train_track",
+    model: "train_track.glb",
+    selectable: false,
+  },
+  train: {
+    name: "train",
+    model: "train.glb",
+    audio: {
+      default: "choochoo.wav",
+    },
+    mesh: [],
+    url: "https://github.com/gustavo-tomas/MyPortfolio",
+    description: `
+      <div class="section-title">
+        Little Train :)
+      </div>
+      <div class="section-description">
+        Source code for this project
+      </div>
+    `,
+    hover: false,
+    selectable: false,
+  },
+  arches: {
+    name: "arches",
+    model: "arches.glb",
+    selectable: false,
   },
 };
