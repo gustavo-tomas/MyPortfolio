@@ -18,6 +18,9 @@ import * as EVENTS from "./events";
 // List of clickable objects in the scene
 const objects = [];
 
+// List of mixers for each object in the scene
+const mixers = [];
+
 // Scene setup
 const scene = new THREE.Scene();
 scene.background = new THREE.Color("#ababab");
@@ -41,13 +44,17 @@ renderer.toneMappingExposure = 1.2;
 renderer.shadowMap.enabled = true;
 document.body.appendChild(renderer.domElement);
 
+// Clock
+const clock = new THREE.Clock();
+
 // Camera controls
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.autoRotate = true;
 controls.autoRotateSpeed = 0.7;
 controls.enableDamping = true;
 controls.enablePan = false;
-controls.enableZoom = false;
+controls.minDistance = 6;
+controls.maxDistance = 15;
 controls.maxPolarAngle = Math.PI / 2.5;
 controls.minPolarAngle = Math.PI / 2.5;
 
@@ -55,7 +62,7 @@ controls.minPolarAngle = Math.PI / 2.5;
 
 // Point Light
 const pointLight = new THREE.PointLight(0xFFFFFF, 1);
-pointLight.position.set(0, 3, 0);
+pointLight.position.set(0, 7, 0);
 pointLight.castShadow = true;
 pointLight.shadow.bias = -0.0001;
 pointLight.shadow.mapSize.width = 4096;
@@ -83,6 +90,7 @@ Object.values(assets).forEach((asset) => {
     texture: asset.texture,
     assets: assets,
     objects: objects,
+    mixers: mixers,
     scene: scene,
     name: asset.name,
   });
@@ -101,6 +109,7 @@ EVENTS.setEvents({
 function animate() {
   requestAnimationFrame(animate);
   controls.update();
+  mixers.forEach((mixer) => { mixer.update(clock.getDelta()); });
   EVENTS.rotateObjects({ objects: objects, assets: assets });
   renderer.render(scene, camera);
 }
@@ -108,13 +117,3 @@ function animate() {
 animate();
 
 console.log(renderer.info);
-
-const plane = new THREE.Mesh(
-  new THREE.PlaneGeometry(50, 50),
-  new THREE.MeshBasicMaterial({color: 0x004455, side: THREE.DoubleSide})
-);
-plane.rotation.x = Math.PI / 2;
-plane.position.y -= 0.9;
-plane.castShadow = true;
-plane.receiveShadow = true;
-scene.add(plane)

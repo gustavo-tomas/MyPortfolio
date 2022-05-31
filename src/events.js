@@ -17,6 +17,10 @@ export function setEvents(params) {
     params.renderer.setSize(window.innerWidth, window.innerHeight);
   }
   
+  /**
+   * @TODO
+   * @param {*} e 
+   */
   function onClick(e) {
     var intersects = UTILS.getIntersection({
       camera: params.camera,
@@ -25,10 +29,14 @@ export function setEvents(params) {
     });
     if (intersects.length > 0) {
       var url = intersects[0].object.userData.url;
-      window.open(url, "_blank");
+      if (url) window.open(url, "_blank");
     }
   }
   
+  /**
+   * @TODO
+   * @param {*} e 
+   */
   function onMove(e) {
     var intersects = UTILS.getIntersection({
       camera: params.camera,
@@ -36,12 +44,21 @@ export function setEvents(params) {
       event: e 
     });
     if (intersects.length > 0) {
-      document.body.style.cursor = "pointer";
       var selectedObject = intersects[0].object; // First intersected object
       if (params.objects.includes(selectedObject) && !hoverCount) {
-        params.assets[selectedObject.name].hover = true;
+        document.body.style.cursor = "pointer";
+        if (params.assets[selectedObject.name].selectable) {
+          params.assets[selectedObject.name].hover = true;
+          hoverCount++;
+        }
+        if (params.assets[selectedObject.name].audio) {
+          var audio = document.getElementsByTagName("audio")[0];
+          if (audio.paused) {
+            audio.volume = 0.1;
+            audio.play();
+          }
+        }
         objectName = selectedObject.name;
-        hoverCount++;
         UTILS.setVisibility({ divID: objectName, visibility: "visible" });
       }
     }

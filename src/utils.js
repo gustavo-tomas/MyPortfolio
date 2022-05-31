@@ -6,6 +6,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 // Paths
 const modelsPath = "./public/assets/models/";
+const audiosPath = "./public/assets/audios/";
 
 /**
  * @brief Loads html file into a given Section 
@@ -41,6 +42,7 @@ export function load(params) {
     sectionID: params.name,
   });
   loadModels(params);
+  loadAudio(params);
 }
 
 /**
@@ -69,13 +71,41 @@ function loadModels(params) {
           
           obj.userData.url = params.assets[name].url;
           
-          params.assets[name].mesh.push(obj);
-          params.objects.push(obj);
+          if (params.assets[name].mesh) {
+            params.assets[name].mesh.push(obj);
+            params.objects.push(obj);
+          }
         }
       });
+
+      // Loading animations
+      const animations = gltf.animations;
+      
+      if (animations.length > 0) {
+        const mixer = new THREE.AnimationMixer(model);
+        const action = mixer.clipAction(animations[0]);
+        action.play();
+
+        params.mixers.push(mixer);
+      }
       params.scene.add(model);
     }
   );
+}
+
+/**
+ * @TODO
+ * @param {*} params 
+ */
+function loadAudio(params) {
+  if (params.assets[params.name].audio) {
+    const audioFile = audiosPath + params.assets[params.name].audio.default;
+    const div = document.getElementById("audio");
+    const audio = document.createElement("audio");
+    audio.setAttribute("src", audioFile);
+
+    div.appendChild(audio);
+  }
 }
 
 /**
