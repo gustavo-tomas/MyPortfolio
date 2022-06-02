@@ -5,8 +5,8 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 // Paths
-const modelsPath = "./public/assets/models/";
-const audiosPath = "./public/assets/audios/";
+const modelsPath = "./assets/models/";
+const audiosPath = "./assets/audios/";
 
 /**
  * @brief Loads html file into a given Section 

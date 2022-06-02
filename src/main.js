@@ -1,5 +1,3 @@
-import "../public/style.css"
-
 // Three.js
 import * as THREE from "three";
 
