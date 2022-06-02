@@ -66,6 +66,11 @@ function loadModels(params) {
           obj.castShadow = true;
           obj.receiveShadow = true;
 
+          if (params.assets[name].static) {
+            obj.matrixAutoUpdate = false;
+            obj.updateMatrix();
+          }
+
           if (obj.material.map)
             obj.material.map.anisotropy = 16;
           
@@ -123,4 +128,32 @@ export function getIntersection(params) {
   raycaster.setFromCamera(mouse, params.camera);
 
   return raycaster.intersectObjects(params.objects);
+}
+
+const times = [];
+export var fps = 0;
+
+/**
+ * @TODO
+ */
+export function countFPS() {
+  window.requestAnimationFrame(() => {
+    const now = performance.now();
+    while (times.length > 0 && times[0] <= now - 1000) {
+      times.shift();
+    }
+    times.push(now);
+    fps = times.length;
+    updateFPSCounter(fps);
+    countFPS();
+  });
+}
+
+/**
+ * @TODO
+ * @param {*} count 
+ */
+function updateFPSCounter(count) {
+  const fps = document.getElementById("curr-fps");
+  fps.innerText = count;
 }
