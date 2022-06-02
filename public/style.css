@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
+
 * {
   padding: 0px;
   margin: 0px;
@@ -5,6 +7,7 @@
 }
 
 html, body {
+  font-family: 'Raleway', sans-serif;
   overflow-x: hidden;
 
   -ms-overflow-style: none; /* for Internet Explorer, Edge */
@@ -20,6 +23,26 @@ canvas {
   position: fixed;
   top: 0;
   left: 0;
+  opacity: 0;
+}
+
+#cover {
+  background-color: red;
+  width: 100vw;
+  height: 100vh;
+  font-size: 7rem;
+  padding: 20px;
+  user-select: none;
+  z-index: 9999;
+}
+
+#instructions {
+  font-size: 2rem;
+  padding-left: 10px;
+}
+
+#wip {
+  grid-column: 6 / 8;
 }
 
 #app {
@@ -31,13 +54,70 @@ canvas {
   user-select: none;
 }
 
+#faq {
+  grid-column: 1 / 5;
+  padding: 30px;
+  color: white;
+  border-radius: 5px;
+  margin-top: 0px;
+  z-index: 9999;
+  opacity: 0;
+  visibility: visible;
+}
+
+#faq-questions {
+  opacity: 0;
+  transition: all;
+  transition-duration: 1s;
+}
+
+#quality {
+  grid-column: 2 / 4;
+  margin-left: -20px;
+  padding: 30px;
+  color: white;
+  border-radius: 5px;
+  margin-top: 0px;
+  z-index: 9999;
+  opacity: 0;
+  visibility: visible;
+}
+
+#curr-quality {
+  display: inline-block;
+}
+
+#fps-counter {
+  grid-column: 1 / 3;
+  bottom: 0;
+  padding-left: 30px;
+  color: white;
+  border-radius: 5px;
+  z-index: 9999;
+  opacity: 0;
+  visibility: visible;
+}
+
+#fps-counter.section {
+  margin: 0px;
+}
+
+#fps-counter-text {
+  margin: 0px;
+}
+
+#curr-fps {
+  min-width: 25px;
+  display: inline-block;
+}
+
 #welcome-section {
   margin-top: 70vh;
   padding: 30px;
   color: white;
   background-color: black;
   border-radius: 5px;
-  z-index: 1;
+  z-index: 999;
 }
 
 #title {
@@ -50,6 +130,7 @@ canvas {
 
 .home {
   grid-column: 8 / 12;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
 
 .section {
@@ -68,6 +149,7 @@ canvas {
   padding: 10px 15px;
   margin-bottom: 5px;
   width: fit-content;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
 
 .section-description {
@@ -75,4 +157,11 @@ canvas {
   background-color: black;
   padding: 10px 15px;
   width: fit-content;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+
+.show {
+  opacity: 1 !important;
+  transition: all;
+  transition-duration: 2s;
 }

@@ -6,16 +6,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 // Paths
 const modelsPath = "./public/assets/models/";
-const texturesPath = "./public/assets/textures/";
-
-/**
- * @brief Fetches Html file as a string
- * @param {String} url - Address for the HTML to fetch
- * @returns {String} The resulting HTML string fragment
- */
-async function fetchHtmlAsText(url) {
-  return await (await fetch(url)).text();
-}
+const audiosPath = "./public/assets/audios/";
 
 /**
  * @brief Loads html file into a given Section 
@@ -23,10 +14,10 @@ async function fetchHtmlAsText(url) {
  * @param {String} sectionID - The ID of the section to load the HTML file
  * @param {File} sectionFile - The HTML file to be inserted into the section
  */
-export async function loadSections(params) {
+function loadSections(params) {
   const contentDiv = document.getElementById(params.sectionID);
   if (contentDiv)
-    contentDiv.innerHTML += await fetchHtmlAsText(params.sectionFile);
+    contentDiv.innerHTML += params.assets[params.sectionID].description;
 }
 
 /**
@@ -47,10 +38,11 @@ export function setVisibility(params) {
  */
 export function load(params) {
   loadSections({
+    assets: params.assets,
     sectionID: params.name,
-    sectionFile: params.name + ".html",
   });
   loadModels(params);
+  loadAudio(params);
 }
 
 /**
@@ -68,40 +60,57 @@ function loadModels(params) {
       model.scale.set(2, 2, 2);
       
       const name = params.model.split(".")[0];
-      const textureLoader = new THREE.TextureLoader();
-      
-      textureLoader.load(
-        texturesPath + params.texture,
-        function(texture) {
-          const mat = new THREE.MeshBasicMaterial({
-            map: texture
-          });
-          // Mapping textures & shadows
-          model.traverse((obj) => {
-            if (obj.isMesh) {
-              obj.castShadow = true;
-              obj.receiveShadow = true;
-              
-              obj.userData.url = params.assets[name].url;
-              
-              if (obj.material) {
-                obj.material = mat;
-                obj.material.map.anisotropy = 16;
-              }
-              else {
-                console.warn("No material")
-              }
-              
-              params.assets[name].mesh.push(obj);
-              params.objects.push(obj);
-            }
-          });
-        }
-      );
+      // Mapping textures & shadows
+      model.traverse((obj) => {
+        if (obj.isMesh) {
+          obj.castShadow = true;
+          obj.receiveShadow = true;
 
+          if (params.assets[name].static) {
+            obj.matrixAutoUpdate = false;
+            obj.updateMatrix();
+          }
+
+          if (obj.material.map)
+            obj.material.map.anisotropy = 16;
+          
+          obj.userData.url = params.assets[name].url;
+          
+          if (params.assets[name].mesh) {
+            params.assets[name].mesh.push(obj);
+            params.objects.push(obj);
+          }
+        }
+      });
+
+      // Loading animations
+      const animations = gltf.animations;
+      
+      if (animations.length > 0) {
+        const mixer = new THREE.AnimationMixer(model);
+        const action = mixer.clipAction(animations[0]);
+        action.play();
+
+        params.mixers.push(mixer);
+      }
       params.scene.add(model);
     }
   );
+}
+
+/**
+ * @TODO
+ * @param {*} params 
+ */
+function loadAudio(params) {
+  if (params.assets[params.name].audio) {
+    const audioFile = audiosPath + params.assets[params.name].audio.default;
+    const div = document.getElementById("audio");
+    const audio = document.createElement("audio");
+    audio.setAttribute("src", audioFile);
+
+    div.appendChild(audio);
+  }
 }
 
 /**
@@ -119,4 +128,32 @@ export function getIntersection(params) {
   raycaster.setFromCamera(mouse, params.camera);
 
   return raycaster.intersectObjects(params.objects);
+}
+
+const times = [];
+export var fps = 0;
+
+/**
+ * @TODO
+ */
+export function countFPS() {
+  window.requestAnimationFrame(() => {
+    const now = performance.now();
+    while (times.length > 0 && times[0] <= now - 1000) {
+      times.shift();
+    }
+    times.push(now);
+    fps = times.length;
+    updateFPSCounter(fps);
+    countFPS();
+  });
+}
+
+/**
+ * @TODO
+ * @param {*} count 
+ */
+function updateFPSCounter(count) {
+  const fps = document.getElementById("curr-fps");
+  fps.innerText = count;
 }

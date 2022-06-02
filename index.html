@@ -7,19 +7,53 @@
     <title>My Portfolio</title>
   </head>
   <body>
+    <div id="cover">
+      <div id="start">
+        Click to Start :)
+      </div>
+      <div id="instructions">
+        Rotate with Left Mouse<br>
+        Zoom with Mouse Scroll
+      </div>
+    </div>
     <div id="app">
-      <div id="welcome-section" class="home">
+      <div id="wip">this is a wip in progress</div>
+      <div id="welcome-section" class="home" title=":)">
         <div id="title">
           Gustavo Tomás
         </div>
         <div id="subtitle" class="home">
-          Welcome to my portfolio!
+          &#128214; Welcome to my portfolio!
+        </div>
+      </div>
+      <div id="faq" class="section">
+        <div id="faq-title" class="section-title" title="Click to Show/Hide">
+          FAQ
+        </div>
+        <div id="faq-questions" class="section-description">
+          > Why textures trash? <br>
+          PC can't bake high resolution textures :(
+          <br><br>
+          > Why lights bad? <br>
+          Dynamic lights use a lot of VRAM :((
+        </div>
+      </div>
+      <div id="quality" class="section" title="Shadow Quality">
+        <div class="section-title">
+          Quality: <p id="curr-quality">Low</p>
+        </div>
+      </div>
+      <div id="fps-counter" class="section" title="Maximum of 60">
+        <div id="fps-counter-text" class="section-title">
+          FPS: <p id="curr-fps">60</p>
         </div>
       </div>
       <div id="discordbot" class="section"></div>
       <div id="todorust" class="section"></div>
       <div id="balancasolucoes" class="section"></div>
       <div id="github" class="section"></div>
+      <div id="train" class="section"></div>
+      <div id="audio"></div>
     </div>
     <script type="module" src="./src/main.js"></script>
   </body>
