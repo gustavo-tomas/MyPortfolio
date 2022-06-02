@@ -66,6 +66,7 @@ export const assets = {
     name: "train_track",
     model: "train_track.glb",
     selectable: false,
+    static: true,
   },
   train: {
     name: "train",
@@ -77,10 +78,10 @@ export const assets = {
     url: "https://github.com/gustavo-tomas/MyPortfolio",
     description: `
       <div class="section-title">
-        Little Train :)
+        Little Train
       </div>
       <div class="section-description">
-        Source code for this project
+        Source code for this project :)
       </div>
     `,
     hover: false,
@@ -90,5 +91,6 @@ export const assets = {
     name: "arches",
     model: "arches.glb",
     selectable: false,
+    static: true,
   },
 };
