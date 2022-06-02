@@ -23,7 +23,8 @@ const mixers = [];
 
 // Scene setup
 const scene = new THREE.Scene();
-scene.background = new THREE.Color("#ababab");
+scene.background = new THREE.Color("#50CCEB");
+scene.fog = new THREE.Fog("#50cceb", 10, 500);
 
 // Camera setup
 const fov = 50; 
@@ -34,14 +35,17 @@ const camera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
 camera.position.set(0, 5, 5);
 
 // Renderer setup
-const renderer = new THREE.WebGL1Renderer();
+const renderer = new THREE.WebGL1Renderer({
+  antialias: true,
+});
 
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputEncoding = THREE.sRGBEncoding;
-renderer.toneMapping = THREE.ReinhardToneMapping;
-renderer.toneMappingExposure = 1.2;
+renderer.toneMapping = THREE.NoToneMapping;
+renderer.toneMappingExposure = 1;
 renderer.shadowMap.enabled = true;
+renderer.physicallyCorrectLights = true;
 document.body.appendChild(renderer.domElement);
 
 // Clock
@@ -61,12 +65,13 @@ controls.minPolarAngle = Math.PI / 2.5;
 // Light setup
 
 // Point Light
-const pointLight = new THREE.PointLight(0xFFFFFF, 1);
+const pointLight = new THREE.PointLight(0xFFFFFF);
+pointLight.power = 200;
 pointLight.position.set(0, 7, 0);
 pointLight.castShadow = true;
 pointLight.shadow.bias = -0.0001;
-pointLight.shadow.mapSize.width = 4096;
-pointLight.shadow.mapSize.height = 4096;
+pointLight.shadow.mapSize.width = 1024;
+pointLight.shadow.mapSize.height = 1024;
 scene.add(pointLight);
 
 // Hemisphere Light
@@ -75,13 +80,7 @@ scene.add(hemiLight);
 
 // Helpers
 const lightHelper = new THREE.PointLightHelper(pointLight);
-scene.add(lightHelper);
-
-const gridHelper = new THREE.GridHelper(200, 50);
-scene.add(gridHelper);
-
-const axesHelper = new THREE.AxesHelper(500);
-scene.add(axesHelper);
+// scene.add(lightHelper);
 
 // Loads models, textures and related sections
 Object.values(assets).forEach((asset) => {  
@@ -101,6 +100,7 @@ EVENTS.setEvents({
   camera: camera,
   assets: assets,
   objects: objects,
+  light: pointLight,
 });
 
 /**
@@ -116,4 +116,4 @@ function animate() {
 
 animate();
 
-console.log(renderer.info);
+// console.log(renderer.info);
