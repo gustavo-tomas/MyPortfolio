@@ -5,3 +5,7 @@ This is my personal portfolio made with [threejs](https://threejs.org). All mode
 ## Vercel App
 
 Click [here](https://my-portfolio-xi-lime.vercel.app/) to open MyPortfolio!
+
+## Deploy
+
+If you want to run the app in a local environment, run ``` npm run dev ```.
